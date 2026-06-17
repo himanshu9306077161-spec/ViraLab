@@ -5,9 +5,9 @@
     "language": "hi-IN",
     "voice": "hi-IN-SwaraNeural",
     "episodes": 5,
-    "status": "pending",
+    "status": "done",
     "note": "Change status to pending to generate videos. Change to done when complete.",
-    "completed": "2026-06-17T15:44:31.487811",
+    "completed": "2026-06-17T15:58:04.503989",
     "results": []
   }
 ]

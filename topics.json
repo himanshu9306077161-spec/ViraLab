@@ -1,0 +1,11 @@
+[
+  {
+    "topic": "Cartoon animals teaching colours and shapes for toddlers",
+    "audience": "toddler",
+    "language": "hi-IN",
+    "voice": "hi-IN-SwaraNeural",
+    "episodes": 5,
+    "status": "pending",
+    "note": "Change status to pending to generate videos. Change to done when complete."
+  }
+]

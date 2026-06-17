@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050810">
+<title>ViraLab Studio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#050810;--bg2:#080d1a;--bg3:#0d1627;
+  --b1:#1a2744;--b2:#1e3a6e;
+  --txt:#e8eef8;--dim:#5a7a9e;--dim2:#2d4a6e;
+  --in:#6366f1;--vi:#8b5cf6;--cy:#06b6d4;
+  --em:#10b981;--am:#f59e0b;--ro:#f43f5e;
+}
+html,body{background:var(--bg);color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+button{cursor:pointer;font-family:inherit;border:none}
+input,textarea,select{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--dim2);border-radius:3px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes up{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* LAYOUT */
+.hdr{background:var(--bg2);border-bottom:1px solid var(--b1);padding:12px 16px;
+  position:sticky;top:0;z-index:90;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:15px;font-weight:800;
+  background:linear-gradient(90deg,var(--in),var(--cy));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:8px;color:var(--dim2);margin-top:1px}
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--b1);
+  overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 18px;font-size:11px;font-weight:700;color:var(--dim);
+  background:none;border:none;border-bottom:2px solid transparent;
+  white-space:nowrap;transition:all .15s}
+.tab.on{color:var(--in);border-bottom-color:var(--in)}
+.body{padding:14px 14px 90px;max-width:480px;margin:0 auto}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
+  border-top:1px solid var(--b1);display:flex;padding:8px 0 16px;z-index:99}
+.nb{flex:1;background:none;border:none;color:var(--dim2);font-size:10px;
+  font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px}
+.nb.on{color:var(--in)}
+.ni{font-size:20px;line-height:1.1}
+
+/* COMPONENTS */
+.card{background:var(--bg3);border:1px solid var(--b1);border-radius:14px;
+  padding:14px;margin-bottom:10px;animation:up .3s ease}
+.slabel{font-size:8px;color:var(--dim2);text-transform:uppercase;
+  letter-spacing:1.5px;font-weight:800;margin-bottom:7px}
+.flabel{font-size:9px;color:var(--dim);font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.inp{width:100%;background:var(--bg);border:1px solid var(--b2);
+  border-radius:10px;padding:10px 12px;color:var(--txt);font-size:13px}
+.inp:focus{border-color:var(--in)}
+.inp-mono{color:var(--cy);font-family:monospace;font-size:11px}
+.btn{width:100%;padding:13px;font-size:13px;font-weight:700;
+  border:none;border-radius:12px;transition:all .2s}
+.btn-main{background:linear-gradient(135deg,var(--in),var(--vi),var(--cy));
+  color:#fff;box-shadow:0 0 25px rgba(99,102,241,.35)}
+.btn-main:disabled{background:var(--bg2);color:var(--dim);
+  box-shadow:none;cursor:not-allowed}
+.btn-sm{border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;border:1px solid}
+.btn-em{color:var(--em);background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.4)}
+.btn-am{color:var(--am);background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)}
+.btn-save{background:linear-gradient(135deg,var(--in),var(--vi));
+  color:#fff;border-radius:10px;padding:11px;font-size:12px;font-weight:700;width:100%}
+.badge{font-size:9px;font-weight:700;padding:2px 8px;
+  border-radius:20px;display:inline-block;border:1px solid}
+.badge-em{color:var(--em);background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4)}
+.badge-am{color:var(--am);background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)}
+.badge-in{color:var(--in);background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.4)}
+.badge-ro{color:var(--ro);background:rgba(244,63,94,.1);border-color:rgba(244,63,94,.3)}
+.pbar{height:4px;background:var(--b1);border-radius:4px;overflow:hidden;margin:5px 0}
+.pfill{height:100%;border-radius:4px;transition:width .5s ease}
+.logbox{background:var(--bg);border:1px solid var(--b1);border-radius:10px;
+  padding:10px 12px;max-height:150px;overflow-y:auto;font-family:monospace;font-size:10px}
+.ll{color:var(--dim);margin-bottom:3px;line-height:1.4}
+.ll-ok{color:var(--em)}
+.ll-err{color:var(--ro)}
+.aud-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+.aud-btn{background:var(--bg3);border:1px solid var(--b1);border-radius:11px;
+  padding:10px;text-align:left;transition:all .2s}
+.aud-btn.on{background:rgba(99,102,241,.12);border-color:var(--in)}
+.lang-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.lb{display:flex;align-items:center;gap:4px;border-radius:20px;
+  padding:4px 10px;font-size:10px;font-weight:600;
+  border:1px solid var(--b1);background:var(--bg3);color:var(--dim)}
+.lb.on{background:rgba(6,182,212,.12);border-color:var(--cy);color:var(--cy)}
+.sched-row{display:flex;gap:6px;margin-bottom:10px}
+.sb{flex:1;background:var(--bg3);border:1px solid var(--b1);
+  border-radius:10px;padding:8px 4px;text-align:center}
+.sb.on{background:rgba(99,102,241,.12);border-color:var(--in)}
+.freq-row{display:flex;gap:5px;flex-wrap:wrap}
+.fb{background:var(--bg);border:1px solid var(--b1);border-radius:8px;
+  padding:5px 11px;font-size:10px;font-weight:700;color:var(--dim)}
+.fb.on{background:rgba(99,102,241,.12);border-color:var(--in);color:var(--in)}
+.time-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.tb{background:var(--bg);border:1px solid var(--b1);border-radius:8px;
+  padding:4px 9px;font-size:10px;font-weight:700;color:var(--dim)}
+.tb.on{background:rgba(99,102,241,.12);border-color:var(--in);color:var(--in)}
+.summary{background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);
+  border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.sr{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px}
+.hero{background:linear-gradient(135deg,var(--bg3),#0a1830);
+  border:1px solid var(--b2);border-radius:18px;padding:20px 16px;
+  text-align:center;margin-bottom:12px}
+.grad{background:linear-gradient(90deg,var(--in),var(--cy),var(--em));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:10px 0 14px}
+.chip{background:var(--bg3);border:1px solid var(--b1);
+  border-radius:20px;padding:3px 10px;font-size:10px;color:var(--dim)}
+.free-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.fi{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);
+  border-radius:10px;padding:9px 10px}
+.job-card{background:var(--bg3);border:1px solid var(--b1);
+  border-radius:12px;padding:12px 13px;margin-bottom:8px;animation:up .3s ease}
+.job-card.running{border-color:rgba(99,102,241,.4)}
+.job-card.done{border-color:rgba(16,185,129,.35)}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  padding:10px 20px;border-radius:20px;font-size:12px;font-weight:700;
+  z-index:999;white-space:nowrap;display:none;animation:up .3s ease}
+.conn-row{display:flex;align-items:center;gap:10px;padding:9px 11px;
+  background:var(--bg);border-radius:10px;margin-bottom:6px;
+  border:1px solid var(--b1)}
+.spin-icon{display:inline-block;width:12px;height:12px;
+  border:2px solid rgba(99,102,241,.3);border-top-color:var(--in);
+  border-radius:50%;animation:spin 1s linear infinite}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <div class="logo">⬡ VIRALAB STUDIO</div>
+    <div class="logo-sub">GitHub-powered · No server needed · 100% free</div>
+  </div>
+  <span class="badge" id="hdr-badge">⏳ Setup</span>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" onclick="go('home')"     id="tab-home">🏠 Home</button>
+  <button class="tab"    onclick="go('create')"   id="tab-create">🎬 Create</button>
+  <button class="tab"    onclick="go('jobs')"     id="tab-jobs">📋 Jobs</button>
+  <button class="tab"    onclick="go('settings')" id="tab-settings">⚙️ Settings</button>
+</div>
+
+<!-- ══════ HOME ══════ -->
+<div id="s-home" class="body">
+  <div class="hero">
+    <div style="font-size:10px;color:var(--in);letter-spacing:2px;font-weight:700;margin-bottom:10px">GITHUB-POWERED AI VIDEO PLATFORM</div>
+    <div style="font-size:22px;font-weight:900;line-height:1.2;margin-bottom:8px">
+      Type topic →<br><span class="grad">Video on YouTube</span>
+    </div>
+    <div style="font-size:11px;color:var(--dim);line-height:1.9;margin-bottom:12px">
+      Website → GitHub API → GitHub Actions →<br>
+      Pexels + Edge TTS + MoviePy → YouTube ✅<br>
+      <strong style="color:var(--em)">No server. No backend. Just GitHub.</strong>
+    </div>
+    <div class="chips">
+      <span class="chip">🎬 Pexels HD</span>
+      <span class="chip">🎙 Edge TTS</span>
+      <span class="chip">⚙️ GitHub Actions</span>
+      <span class="chip">📺 YouTube Auto</span>
+      <span class="chip">🌍 10 Languages</span>
+      <span class="chip">₹0 Cost</span>
+    </div>
+    <button class="btn btn-main" onclick="go('create')">🚀 Create Video Series</button>
+  </div>
+
+  <div class="slabel">HOW IT WORKS (NO SERVER NEEDED)</div>
+  <div class="card" id="how-steps"></div>
+
+  <div id="home-recent"></div>
+</div>
+
+<!-- ══════ CREATE ══════ -->
+<div id="s-create" class="body" style="display:none">
+
+  <div class="slabel">WHAT IS YOUR VIDEO SERIES ABOUT?</div>
+  <textarea class="inp" id="inp-topic" rows="3" style="margin-bottom:14px"
+    placeholder="e.g. 'Cartoon animals teaching colours for toddlers'&#10;or 'Python programming from zero to hero'&#10;or 'Indian history for children'"></textarea>
+
+  <div class="slabel">AUDIENCE</div>
+  <div class="aud-grid" id="aud-grid"></div>
+
+  <div class="slabel">EPISODES: <span id="ep-val">5</span></div>
+  <input type="range" min="1" max="10" value="5" id="ep-range"
+    style="width:100%;accent-color:var(--in);margin-bottom:4px"
+    oninput="Q('ep-val').textContent=this.value;upd()">
+  <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim2);margin-bottom:14px">
+    <span>1 episode</span><span>10 max</span>
+  </div>
+
+  <div class="slabel">LANGUAGE</div>
+  <div class="lang-wrap" id="lang-wrap"></div>
+
+  <div class="slabel">UPLOAD SCHEDULE</div>
+  <div class="sched-row" id="sched-row"></div>
+  <div id="sched-opts" style="background:var(--bg3);border:1px solid var(--b1);border-radius:12px;padding:12px;margin-bottom:10px">
+    <div style="margin-bottom:10px">
+      <div class="flabel">Start Date</div>
+      <input type="date" class="inp" id="inp-date" onchange="upd()">
+    </div>
+    <div style="margin-bottom:10px">
+      <div class="flabel">Upload Time (IST)</div>
+      <input type="time" value="19:00" class="inp" id="inp-time" onchange="upd()">
+      <div class="time-row" id="time-row"></div>
+    </div>
+    <div>
+      <div class="flabel">Frequency Between Episodes</div>
+      <div class="freq-row" id="freq-row"></div>
+    </div>
+  </div>
+
+  <div id="sched-preview" style="background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:10px 12px;margin-bottom:14px"></div>
+  <div class="summary" id="create-summary"></div>
+
+  <button class="btn btn-main" id="btn-go" onclick="createSeries()">
+    🚀 Generate & Upload to YouTube
+  </button>
+  <div id="go-status" style="display:none;margin-top:12px"></div>
+</div>
+
+<!-- ══════ JOBS ══════ -->
+<div id="s-jobs" class="body" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="slabel" style="margin:0">JOBS</div>
+    <button class="btn-sm btn-em" onclick="renderJobs()">↺ Refresh</button>
+  </div>
+  <div id="jobs-list"></div>
+</div>
+
+<!-- ══════ SETTINGS ══════ -->
+<div id="s-settings" class="body" style="display:none">
+
+  <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);
+    border-radius:12px;padding:10px 13px;margin-bottom:12px;
+    font-size:10px;color:var(--em);line-height:1.8">
+    ✅ All keys save permanently in your browser.<br>Enter once — saved forever.
+  </div>
+
+  <!-- GitHub Token -->
+  <div class="slabel">GITHUB PERSONAL ACCESS TOKEN</div>
+  <div class="card" style="border-color:rgba(99,102,241,.3);margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(99,102,241,.15);
+        display:flex;align-items:center;justify-content:center;font-size:18px">🔑</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">GitHub Token</div>
+        <div style="font-size:9px;color:var(--dim)">Allows website to update topics.json and trigger GitHub Actions</div>
+      </div>
+      <span class="badge" id="gh-badge">⏳</span>
+    </div>
+    <div class="flabel">Personal Access Token (repo scope)</div>
+    <input class="inp inp-mono" type="password" id="inp-ghtoken"
+      placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="margin-bottom:6px">
+    <div style="font-size:9px;color:var(--dim2);margin-bottom:10px;line-height:1.6">
+      Get free: github.com → Settings → Developer settings →<br>
+      Personal access tokens → Tokens (classic) → Generate new token<br>
+      Select scope: ✅ <strong style="color:var(--txt)">repo</strong>
+    </div>
+    <button class="btn-save" onclick="saveGH()">🔑 Save GitHub Token</button>
+  </div>
+
+  <!-- GitHub Repo -->
+  <div class="slabel">GITHUB REPOSITORY</div>
+  <div class="card" style="border-color:rgba(99,102,241,.3);margin-bottom:12px">
+    <div class="flabel">Repository Owner</div>
+    <input class="inp inp-mono" id="inp-owner"
+      placeholder="himanshu9306077161-spec" style="margin-bottom:8px">
+    <div class="flabel">Repository Name</div>
+    <input class="inp inp-mono" id="inp-repo"
+      placeholder="viralab" style="margin-bottom:10px">
+    <button class="btn-save" onclick="saveRepo()">💾 Save Repo Settings</button>
+  </div>
+
+  <!-- YouTube -->
+  <div class="slabel">YOUTUBE — AUTO UPLOAD</div>
+  <div class="card" style="border-color:rgba(255,0,0,.3);margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,0,0,.1);
+        display:flex;align-items:center;justify-content:center;font-size:18px">▶</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">YouTube Refresh Token</div>
+        <div style="font-size:9px;color:var(--dim)">Stored as GitHub Secret — upload to your channel</div>
+      </div>
+      <span class="badge" id="yt-badge">⏳</span>
+    </div>
+    <div class="flabel">Refresh Token</div>
+    <textarea class="inp inp-mono" id="inp-ytref"
+      style="min-height:55px;margin-bottom:10px"
+      placeholder="Paste your YouTube Refresh Token here"></textarea>
+    <button class="btn-save" style="background:linear-gradient(135deg,#c00,#ff4444)"
+      onclick="saveYT()">▶ Save YouTube Token</button>
+  </div>
+
+  <!-- Pexels -->
+  <div class="slabel">PEXELS — FREE HD VIDEOS</div>
+  <div class="card" style="border-color:rgba(16,185,129,.3);margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,.1);
+        display:flex;align-items:center;justify-content:center;font-size:18px">🎬</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">Pexels API Key</div>
+        <div style="font-size:9px;color:var(--dim)">150,000+ free HD videos · pexels.com/api</div>
+      </div>
+      <span class="badge" id="px-badge">⏳</span>
+    </div>
+    <div class="flabel">API Key</div>
+    <input class="inp inp-mono" id="inp-pxkey"
+      placeholder="Paste your Pexels API key" style="margin-bottom:10px">
+    <button class="btn-save" style="background:linear-gradient(135deg,var(--em),var(--cy))"
+      onclick="savePX()">🎬 Save Pexels Key</button>
+  </div>
+
+  <!-- Edge TTS -->
+  <div class="card" style="border-color:rgba(6,182,212,.3);margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(6,182,212,.1);
+        display:flex;align-items:center;justify-content:center;font-size:18px">🎙</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700">Microsoft Edge TTS</div>
+        <div style="font-size:9px;color:var(--dim)">400+ voices · Hindi · English · Tamil · No key needed</div>
+      </div>
+      <span class="badge badge-em">✓ FREE</span>
+    </div>
+    <div style="background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.15);
+      border-radius:9px;padding:9px 11px;margin-top:10px;font-size:10px;color:var(--dim)">
+      ✅ Works automatically. No signup. No key. No limits. Forever free.
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="slabel">CONNECTION STATUS</div>
+  <div class="card" id="conn-status"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="nb on" onclick="go('home')"     id="nb-home"><span class="ni">🏠</span>Home</button>
+  <button class="nb"    onclick="go('create')"   id="nb-create"><span class="ni">🎬</span>Create</button>
+  <button class="nb"    onclick="go('jobs')"     id="nb-jobs"><span class="ni">📋</span>Jobs</button>
+  <button class="nb"    onclick="go('settings')" id="nb-settings"><span class="ni">⚙️</span>Settings</button>
+</nav>
+
+<script>
+// ── STORAGE ───────────────────────────────────────────────────────
+const LS={
+  get:(k,d=null)=>{try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d;}catch{return d;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}},
+};
+
+// ── STATE ─────────────────────────────────────────────────────────
+const S={
+  ghToken: LS.get('vl_ghtoken',''),
+  ghOwner: LS.get('vl_ghowner','himanshu9306077161-spec'),
+  ghRepo:  LS.get('vl_ghrepo','viralab'),
+  ytRef:   LS.get('vl_ytref',''),
+  pxKey:   LS.get('vl_pxkey',''),
+  aud:     LS.get('vl_aud','kids'),
+  lang:    LS.get('vl_lang','hi-IN'),
+  sched:   LS.get('vl_sched','auto'),
+  freq:    LS.get('vl_freq','2'),
+  jobs:    LS.get('vl_jobs',[]),
+  polling: {},
+};
+
+// ── DATA ─────────────────────────────────────────────────────────
+const AUDS=[
+  {id:'toddler',l:'Toddlers 2–4',i:'🧸',d:'Colours, songs, animals'},
+  {id:'kids',   l:'Kids 4–8',    i:'🎨',d:'Stories, fun facts'},
+  {id:'preteen',l:'Pre-teen 8–12',i:'🚀',d:'Science, adventure'},
+  {id:'adult',  l:'Adults',      i:'🎓',d:'Professional, deep-dive'},
+];
+const LANGS=[
+  {c:'hi-IN',n:'Hindi',f:'🇮🇳'},
+  {c:'en-IN',n:'English IN',f:'🇮🇳'},
+  {c:'en-US',n:'English US',f:'🇺🇸'},
+  {c:'ta-IN',n:'Tamil',f:'🇮🇳'},
+  {c:'te-IN',n:'Telugu',f:'🇮🇳'},
+  {c:'mr-IN',n:'Marathi',f:'🇮🇳'},
+  {c:'es-ES',n:'Spanish',f:'🇪🇸'},
+  {c:'fr-FR',n:'French',f:'🇫🇷'},
+  {c:'de-DE',n:'German',f:'🇩🇪'},
+  {c:'ja-JP',n:'Japanese',f:'🇯🇵'},
+];
+const SCHEDS=[{id:'now',i:'⚡',l:'Now'},{id:'auto',i:'📅',l:'Schedule'},{id:'manual',i:'✏️',l:'Manual'}];
+const FREQS=[{v:'1',l:'Daily'},{v:'2',l:'2 Days'},{v:'3',l:'3 Days'},{v:'7',l:'Weekly'}];
+const TIMES=[{t:'07:00',l:'7 AM'},{t:'12:00',l:'12 PM'},{t:'18:00',l:'6 PM'},{t:'19:00',l:'7 PM ⭐'},{t:'20:00',l:'8 PM'},{t:'21:00',l:'9 PM'}];
+const HOW=[
+  {n:'01',c:'var(--in)',t:'You type a topic',d:'Enter your video series idea on this website'},
+  {n:'02',c:'var(--cy)',t:'Website calls GitHub API',d:'Updates topics.json directly in your GitHub repo'},
+  {n:'03',c:'var(--em)',t:'GitHub detects change',d:'topics.json changed → GitHub Actions triggers automatically'},
+  {n:'04',c:'var(--vi)',t:'Pipeline runs free',d:'Pexels HD clips + Edge TTS voice + MoviePy editing'},
+  {n:'05',c:'var(--am)',t:'Video on YouTube',d:'Uploaded automatically with thumbnail, title, description'},
+];
+
+// ── HELPERS ───────────────────────────────────────────────────────
+const Q=id=>document.getElementById(id);
+function toast(msg,col='var(--em)'){
+  const el=Q('toast');el.textContent=msg;
+  el.style.background=col;el.style.color='#fff';el.style.display='block';
+  setTimeout(()=>el.style.display='none',3000);
+}
+function setBadge(id,ok,lbl){
+  const el=Q(id);if(!el)return;
+  el.textContent=ok?`✓ ${lbl}`:'⏳ Not set';
+  el.className='badge '+(ok?'badge-em':'badge-am');
+}
+
+// ── TABS ─────────────────────────────────────────────────────────
+function go(t){
+  ['home','create','jobs','settings'].forEach(x=>{
+    Q('s-'+x).style.display=x===t?'block':'none';
+    Q('tab-'+x).classList.toggle('on',x===t);
+    Q('nb-'+x).classList.toggle('on',x===t);
+  });
+  if(t==='home')    renderHome();
+  if(t==='create')  initCreate();
+  if(t==='jobs')    renderJobs();
+  if(t==='settings')renderSettings();
+}
+
+// ── HOME ─────────────────────────────────────────────────────────
+function renderHome(){
+  Q('how-steps').innerHTML=HOW.map(s=>`
+    <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start">
+      <div style="width:24px;height:24px;border-radius:50%;
+        background:${s.c}20;border:1px solid ${s.c}40;
+        display:flex;align-items:center;justify-content:center;
+        font-size:9px;font-weight:800;color:${s.c};flex-shrink:0">${s.n}</div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px">${s.t}</div>
+        <div style="font-size:10px;color:var(--dim);line-height:1.5">${s.d}</div>
+      </div>
+    </div>`).join('');
+
+  // Connection badge
+  const ok=S.ghToken&&S.ytRef&&S.pxKey;
+  const hb=Q('hdr-badge');
+  hb.textContent=ok?'✅ Ready':'⚠️ Setup needed';
+  hb.className='badge '+(ok?'badge-em':'badge-am');
+
+  // Recent jobs
+  const rj=Q('home-recent');
+  if(!S.jobs.length){rj.innerHTML='';return;}
+  rj.innerHTML='<div class="slabel" style="margin-top:12px">RECENT JOBS</div>'+
+    S.jobs.slice(0,3).map(j=>`
+      <div class="job-card ${j.status}" onclick="go('jobs')">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+          <div style="font-size:12px;font-weight:700">${j.topic.slice(0,42)}${j.topic.length>42?'…':''}</div>
+          <span class="badge ${j.status==='done'?'badge-em':j.status==='error'?'badge-ro':'badge-in'}">${j.status}</span>
+        </div>
+        <div class="pbar"><div class="pfill" style="width:${j.progress||0}%;background:${j.status==='done'?'var(--em)':'var(--in)'}"></div></div>
+        <div style="font-size:9px;color:var(--dim);margin-top:3px">${j.episodes} eps · ${j.lang}</div>
+      </div>`).join('');
+}
+
+// ── CREATE ───────────────────────────────────────────────────────
+function initCreate(){
+  const d=new Date();d.setDate(d.getDate()+1);
+  Q('inp-date').value=d.toISOString().split('T')[0];
+
+  Q('aud-grid').innerHTML=AUDS.map(a=>`
+    <button class="aud-btn${S.aud===a.id?' on':''}" onclick="setA('${a.id}')">
+      <div style="font-size:20px;margin-bottom:3px">${a.i}</div>
+      <div style="font-size:11px;font-weight:700;color:${S.aud===a.id?'var(--in)':'var(--txt)'}">${a.l}</div>
+      <div style="font-size:9px;color:var(--dim);margin-top:2px">${a.d}</div>
+    </button>`).join('');
+
+  Q('lang-wrap').innerHTML=LANGS.map(l=>`
+    <button class="lb${S.lang===l.c?' on':''}" onclick="setL('${l.c}')">${l.f} ${l.n}</button>`).join('');
+
+  Q('sched-row').innerHTML=SCHEDS.map(m=>`
+    <button class="sb${S.sched===m.id?' on':''}" onclick="setSch('${m.id}')">
+      <div style="font-size:18px;margin-bottom:2px">${m.i}</div>
+      <div style="font-size:9px;font-weight:700;color:${S.sched===m.id?'var(--in)':'var(--dim)'}">${m.l}</div>
+    </button>`).join('');
+
+  Q('time-row').innerHTML=TIMES.map(t=>`
+    <button class="tb" onclick="setT('${t.t}')">${t.l}</button>`).join('');
+
+  Q('freq-row').innerHTML=FREQS.map(f=>`
+    <button class="fb${S.freq===f.v?' on':''}" onclick="setF('${f.v}')">${f.l}</button>`).join('');
+
+  Q('sched-opts').style.display=S.sched==='now'?'none':'block';
+  upd();
+}
+
+function setA(id){S.aud=id;LS.set('vl_aud',id);initCreate();}
+function setL(c) {S.lang=c;LS.set('vl_lang',c);initCreate();}
+function setSch(m){S.sched=m;LS.set('vl_sched',m);Q('sched-opts').style.display=m==='now'?'none':'block';initCreate();}
+function setT(t) {Q('inp-time').value=t;Q('time-row').querySelectorAll('.tb').forEach((b,i)=>b.classList.toggle('on',TIMES[i].t===t));upd();}
+function setF(v) {S.freq=v;LS.set('vl_freq',v);Q('freq-row').querySelectorAll('.fb').forEach((b,i)=>b.classList.toggle('on',FREQS[i].v===v));upd();}
+
+function upd(){
+  const topic=Q('inp-topic')?.value||'';
+  const ep=Q('ep-range')?.value||5;
+  const date=Q('inp-date')?.value||new Date().toISOString().split('T')[0];
+  const time=Q('inp-time')?.value||'19:00';
+  const freq=parseInt(S.freq)||2;
+  const aud=AUDS.find(a=>a.id===S.aud);
+  const lang=LANGS.find(l=>l.c===S.lang);
+
+  // Schedule preview
+  let prev='';
+  if(S.sched==='now'){
+    prev='<div style="font-size:10px;color:var(--dim)">⚡ All episodes generated and uploaded immediately</div>';
+  } else {
+    for(let i=0;i<Math.min(ep,4);i++){
+      const d=new Date(date+'T'+time);d.setDate(d.getDate()+i*freq);
+      const lbl=d.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short'});
+      prev+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <div style="width:20px;height:20px;border-radius:50%;
+          background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.4);
+          display:flex;align-items:center;justify-content:center;
+          font-size:8px;font-weight:800;color:var(--in);flex-shrink:0">${i+1}</div>
+        <div style="font-size:10px;color:var(--txt)">${lbl} at ${time} IST</div>
+      </div>`;
+    }
+    if(ep>4) prev+=`<div style="font-size:9px;color:var(--dim2);padding-left:28px">...${ep-4} more episodes</div>`;
+  }
+  const sp=Q('sched-preview');
+  if(sp) sp.innerHTML='<div style="font-size:9px;color:var(--in);font-weight:700;margin-bottom:6px">📅 SCHEDULE PREVIEW</div>'+prev;
+
+  const cs=Q('create-summary');
+  if(cs) cs.innerHTML='<div class="slabel" style="color:var(--in)">SERIES SUMMARY</div>'+
+    [['Topic',topic.slice(0,40)||'—'],['Audience',aud?.l||'—'],
+     ['Episodes',`${ep} videos`],['Language',`${lang?.f||''} ${lang?.n||'—'}`],
+     ['Schedule',S.sched==='now'?'Immediate':`Every ${S.freq} day(s) at ${time} IST`],
+     ['Cost','₹0 — Completely Free'],
+    ].map(([k,v])=>`<div class="sr"><span style="color:var(--dim)">${k}</span>
+      <span style="font-weight:700;color:${k==='Cost'?'var(--em)':'var(--txt)'}">${v}</span></div>`).join('');
+}
+
+// ── GITHUB API ────────────────────────────────────────────────────
+const GH_API = ()=>`https://api.github.com/repos/${S.ghOwner}/${S.ghRepo}`;
+const GH_HEADERS = ()=>({
+  'Authorization': `Bearer ${S.ghToken}`,
+  'Accept': 'application/vnd.github+json',
+  'X-GitHub-Api-Version': '2022-11-28',
+  'Content-Type': 'application/json',
+});
+
+async function ghGetFile(path){
+  const r=await fetch(`${GH_API()}/contents/${path}`,{headers:GH_HEADERS()});
+  if(!r.ok) throw new Error(`GitHub: could not read ${path} (${r.status})`);
+  const d=await r.json();
+  return {content:atob(d.content.replace(/\n/g,'')),sha:d.sha};
+}
+
+async function ghUpdateFile(path,content,sha,message){
+  const r=await fetch(`${GH_API()}/contents/${path}`,{
+    method:'PUT',
+    headers:GH_HEADERS(),
+    body:JSON.stringify({
+      message,
+      content:btoa(unescape(encodeURIComponent(content))),
+      sha,
+      branch:'main',
+    }),
+  });
+  if(!r.ok){
+    const err=await r.json();
+    throw new Error(`GitHub update failed: ${err.message}`);
+  }
+  return true;
+}
+
+// ── CREATE SERIES ─────────────────────────────────────────────────
+async function createSeries(){
+  const topic=Q('inp-topic').value.trim();
+  if(!topic){toast('Please enter a topic!','var(--ro)');return;}
+  if(!S.ghToken){toast('Add GitHub token in Settings first!','var(--am)');go('settings');return;}
+  if(!S.ytRef){toast('Add YouTube token in Settings first!','var(--am)');go('settings');return;}
+  if(!S.pxKey){toast('Add Pexels key in Settings first!','var(--am)');go('settings');return;}
+
+  const btn=Q('btn-go');
+  const stEl=Q('go-status');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin-icon"></span> Updating GitHub...';
+  stEl.style.display='block';
+
+  function log(msg,cls=''){
+    const lb=Q('pipeline-log');
+    if(lb){
+      const d=document.createElement('div');
+      d.className='ll '+(msg.includes('✅')||msg.includes('OK')?'ll-ok':
+        msg.includes('❌')||msg.includes('Error')?'ll-err':cls);
+      d.textContent=msg;lb.appendChild(d);
+      lb.scrollTop=lb.scrollHeight;
+    }
+  }
+
+  const ep=parseInt(Q('ep-range').value)||5;
+  const jobId='job_'+Date.now();
+
+  stEl.innerHTML=`
+    <div class="card" style="border-color:rgba(99,102,241,.4)">
+      <div style="font-size:12px;font-weight:700;color:var(--in);margin-bottom:8px">⚡ Triggering Pipeline...</div>
+      <div class="logbox" id="pipeline-log"></div>
+      <div class="pbar" style="margin-top:8px">
+        <div class="pfill" id="pp" style="width:10%;background:var(--in)"></div>
+      </div>
+    </div>`;
+
+  try{
+    // Step 1: Read current topics.json from GitHub
+    log('Reading topics.json from GitHub...');
+    const {content:rawContent, sha} = await ghGetFile('topics.json');
+    Q('pp').style.width='30%';
+    log('topics.json read ✅');
+
+    let topics=[];
+    try{topics=JSON.parse(rawContent);}catch{topics=[];}
+
+    // Step 2: Add new topic
+    const newTopic={
+      topic,
+      audience:S.aud,
+      language:S.lang,
+      episodes:ep,
+      status:'pending',
+      job_id:jobId,
+      requested:new Date().toISOString(),
+    };
+
+    // Mark any previous pending as queued
+    topics.forEach(t=>{if(t.status==='pending') t.status='queued';});
+    topics.unshift(newTopic);
+    Q('pp').style.width='60%';
+    log(`New topic added: "${topic.slice(0,40)}"...`);
+
+    // Step 3: Push updated topics.json to GitHub
+    log('Pushing to GitHub...');
+    await ghUpdateFile(
+      'topics.json',
+      JSON.stringify(topics,null,2),
+      sha,
+      `ViraLab: new series "${topic.slice(0,50)}" requested`
+    );
+    Q('pp').style.width='90%';
+    log('topics.json updated on GitHub ✅');
+    log('GitHub Actions triggered automatically ✅');
+    log('Pipeline starting: Pexels → Edge TTS → Video → YouTube');
+    Q('pp').style.width='100%';
+    Q('pp').style.background='var(--em)';
+
+    // Save job locally
+    const job={
+      id:jobId,topic,audience:S.aud,lang:S.lang,
+      episodes:ep,status:'running',progress:10,
+      created:new Date().toISOString(),
+      ghUrl:`https://github.com/${S.ghOwner}/${S.ghRepo}/actions`,
+    };
+    S.jobs.unshift(job);
+    if(S.jobs.length>20) S.jobs=S.jobs.slice(0,20);
+    LS.set('vl_jobs',S.jobs);
+
+    // Update UI
+    stEl.innerHTML=`
+      <div class="card" style="border-color:rgba(16,185,129,.4)">
+        <div style="font-size:12px;font-weight:700;color:var(--em);margin-bottom:8px">✅ Pipeline Triggered!</div>
+        <div style="font-size:10px;color:var(--dim);line-height:1.8;margin-bottom:10px">
+          topics.json updated on GitHub.<br>
+          GitHub Actions is now running automatically.<br>
+          <strong style="color:var(--txt)">Videos appear on YouTube in 30–60 minutes.</strong>
+        </div>
+        <div style="display:flex;gap:7px">
+          <a href="https://github.com/${S.ghOwner}/${S.ghRepo}/actions" target="_blank" style="flex:1">
+            <button class="btn-sm btn-em" style="width:100%">⚙️ Watch on GitHub Actions</button>
+          </a>
+          <button class="btn-sm" style="flex:1;border-color:var(--b1);color:var(--dim)" onclick="go('jobs')">
+            📋 View Jobs
+          </button>
+        </div>
+      </div>`;
+
+    btn.disabled=false;
+    btn.innerHTML='🚀 Generate & Upload to YouTube';
+    toast('Pipeline started! Videos uploading to YouTube...');
+
+  }catch(e){
+    log('❌ Error: '+e.message,'ll-err');
+    btn.disabled=false;
+    btn.innerHTML='🚀 Generate & Upload to YouTube';
+    stEl.innerHTML+=`
+      <div class="card" style="border-color:var(--ro);margin-top:8px">
+        <div style="color:var(--ro);font-size:11px;font-weight:700;margin-bottom:6px">❌ Failed</div>
+        <div style="font-size:10px;color:var(--dim);line-height:1.7">${e.message}<br><br>
+          Common fixes:<br>
+          • Check GitHub token has <strong>repo</strong> scope<br>
+          • Check repo owner and name in Settings<br>
+          • Make sure topics.json exists in the repo
+        </div>
+      </div>`;
+    toast('GitHub update failed — check Settings','var(--ro)');
+  }
+}
+
+// ── JOBS ─────────────────────────────────────────────────────────
+function renderJobs(){
+  const el=Q('jobs-list');
+  if(!S.jobs.length){
+    el.innerHTML='<div style="text-align:center;padding:30px;color:var(--dim)">No jobs yet.<br>Create a series to get started.</div>';
+    return;
+  }
+  el.innerHTML=S.jobs.map(j=>{
+    const bc=j.status==='done'?'badge-em':j.status==='error'?'badge-ro':'badge-in';
+    const cc=j.status==='done'?'done':j.status==='running'?'running':'';
+    return `<div class="job-card ${cc}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div style="flex:1;margin-right:8px">
+          <div style="font-size:12px;font-weight:700;margin-bottom:2px">${j.topic.slice(0,48)}${j.topic.length>48?'…':''}</div>
+          <div style="font-size:9px;color:var(--dim)">${j.episodes} eps · ${j.lang} · ${new Date(j.created).toLocaleDateString('en-IN')}</div>
+        </div>
+        <span class="badge ${bc}">${j.status}</span>
+      </div>
+      <div class="pbar"><div class="pfill" style="width:${j.progress||0}%;background:${j.status==='done'?'var(--em)':'var(--in)'}"></div></div>
+      ${j.ghUrl?`<a href="${j.ghUrl}" target="_blank">
+        <button class="btn-sm btn-em" style="margin-top:8px">⚙️ View on GitHub Actions</button>
+      </a>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── SETTINGS ─────────────────────────────────────────────────────
+function renderSettings(){
+  Q('inp-ghtoken').value=S.ghToken||'';
+  Q('inp-owner').value=S.ghOwner||'himanshu9306077161-spec';
+  Q('inp-repo').value=S.ghRepo||'viralab';
+  Q('inp-ytref').value=S.ytRef||'';
+  Q('inp-pxkey').value=S.pxKey||'';
+
+  setBadge('gh-badge',!!S.ghToken,'GitHub');
+  setBadge('yt-badge',!!S.ytRef,'YouTube');
+  setBadge('px-badge',!!S.pxKey,'Pexels');
+
+  Q('conn-status').innerHTML=[
+    {n:'GitHub Token',i:'🔑',ok:!!S.ghToken},
+    {n:'YouTube',     i:'▶', ok:!!S.ytRef},
+    {n:'Pexels HD',   i:'🎬',ok:!!S.pxKey},
+    {n:'Edge TTS',    i:'🎙',ok:true},
+    {n:'GitHub Actions',i:'⚙️',ok:true},
+  ].map(x=>`
+    <div class="conn-row" style="border-color:${x.ok?'rgba(16,185,129,.25)':'var(--b1)'}">
+      <span style="font-size:18px">${x.i}</span>
+      <span style="flex:1;font-size:12px;font-weight:600">${x.n}</span>
+      <span class="badge ${x.ok?'badge-em':'badge-am'}">${x.ok?'✓ Connected':'Not set'}</span>
+    </div>`).join('');
+}
+
+function saveGH(){
+  const v=Q('inp-ghtoken').value.trim();
+  if(!v||!v.startsWith('ghp_')&&!v.startsWith('github_pat_')){
+    toast('Enter a valid GitHub token (starts with ghp_)','var(--am)');return;
+  }
+  S.ghToken=v;LS.set('vl_ghtoken',v);
+  setBadge('gh-badge',true,'GitHub');
+  toast('✅ GitHub token saved!');renderSettings();
+}
+
+function saveRepo(){
+  const owner=Q('inp-owner').value.trim();
+  const repo=Q('inp-repo').value.trim();
+  if(!owner||!repo){toast('Enter owner and repo name','var(--am)');return;}
+  S.ghOwner=owner;S.ghRepo=repo;
+  LS.set('vl_ghowner',owner);LS.set('vl_ghrepo',repo);
+  toast('✅ Repo settings saved!');renderSettings();
+}
+
+function saveYT(){
+  const v=Q('inp-ytref').value.trim();
+  if(!v){toast('Enter your YouTube refresh token','var(--am)');return;}
+  S.ytRef=v;LS.set('vl_ytref',v);
+  setBadge('yt-badge',true,'YouTube');
+  toast('✅ YouTube token saved!');renderSettings();
+}
+
+function savePX(){
+  const v=Q('inp-pxkey').value.trim();
+  if(!v){toast('Enter your Pexels API key','var(--am)');return;}
+  S.pxKey=v;LS.set('vl_pxkey',v);
+  setBadge('px-badge',true,'Pexels');
+  toast('✅ Pexels key saved!');renderSettings();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  renderHome();initCreate();renderSettings();
+  const ti=Q('inp-topic');if(ti) ti.addEventListener('input',upd);
+});
+</script>
+</body>
+</html>

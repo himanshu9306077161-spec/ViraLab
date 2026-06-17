@@ -1,6 +1,6 @@
 name: ViraLab Video Pipeline
 
-on:
+"on":
   push:
     paths:
       - 'topics.json'
@@ -17,10 +17,10 @@ jobs:
     timeout-minutes: 120
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -29,25 +29,50 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg
+          ffmpeg -version | head -1
 
       - name: Install Python packages
         run: |
-          pip install requests edge-tts moviepy==1.0.3 Pillow
-          pip install google-auth google-auth-oauthlib google-api-python-client
-          pip install anthropic
+          pip install --upgrade pip --quiet
+          pip install requests==2.31.0 --quiet
+          pip install edge-tts==6.1.9 --quiet
+          pip install moviepy==1.0.3 --quiet
+          pip install imageio==2.33.0 --quiet
+          pip install imageio-ffmpeg==0.4.9 --quiet
+          pip install Pillow==10.2.0 --quiet
+          pip install google-auth==2.27.0 --quiet
+          pip install google-auth-oauthlib==1.2.0 --quiet
+          pip install google-api-python-client==2.118.0 --quiet
+          pip install anthropic==0.18.1 --quiet
+          echo "All packages installed"
+
+      - name: Check pending topics
+        id: check
+        run: |
+          python3 -c "
+          import json, os
+          with open('topics.json') as f:
+              topics = json.load(f)
+          pending = [t for t in topics if t.get('status') == 'pending']
+          print(f'Pending: {len(pending)}')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write('has_pending=true\n' if pending else 'has_pending=false\n')
+          "
 
       - name: Run Video Pipeline
+        if: steps.check.outputs.has_pending == 'true'
         env:
-          PEXELS_API_KEY:         ${{ secrets.PEXELS_API_KEY }}
-          YOUTUBE_CLIENT_ID:      ${{ secrets.YOUTUBE_CLIENT_ID }}
-          YOUTUBE_CLIENT_SECRET:  ${{ secrets.YOUTUBE_CLIENT_SECRET }}
-          YOUTUBE_REFRESH_TOKEN:  ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
-          ANTHROPIC_API_KEY:      ${{ secrets.ANTHROPIC_API_KEY }}
+          PEXELS_API_KEY:        ${{ secrets.PEXELS_API_KEY }}
+          YOUTUBE_CLIENT_ID:     ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          ANTHROPIC_API_KEY:     ${{ secrets.ANTHROPIC_API_KEY }}
         run: python3 make_video.py
 
       - name: Save results
+        if: steps.check.outputs.has_pending == 'true'
         run: |
-          git config user.email "viralab@github.com"
+          git config user.email "viralab-bot@github.com"
           git config user.name "ViraLab Bot"
           git add topics.json
           git diff --staged --quiet || git commit -m "Videos published $(date +'%d %b %Y')"

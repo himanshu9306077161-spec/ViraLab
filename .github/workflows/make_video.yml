@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 120
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Python 3.11
@@ -31,7 +31,7 @@ jobs:
           sudo apt-get install -y ffmpeg
           ffmpeg -version | head -1
 
-      - name: Install Python packages
+      - name: Install packages
         run: |
           pip install --upgrade pip --quiet
           pip install requests==2.31.0 --quiet
@@ -44,7 +44,7 @@ jobs:
           pip install google-auth-oauthlib==1.2.0 --quiet
           pip install google-api-python-client==2.118.0 --quiet
           pip install anthropic==0.18.1 --quiet
-          echo "All packages installed"
+          echo "All packages ready"
 
       - name: Check pending topics
         id: check
@@ -59,7 +59,7 @@ jobs:
               f.write('has_pending=true\n' if pending else 'has_pending=false\n')
           "
 
-      - name: Run Video Pipeline
+      - name: Run Pipeline
         if: steps.check.outputs.has_pending == 'true'
         env:
           PEXELS_API_KEY:        ${{ secrets.PEXELS_API_KEY }}
@@ -75,5 +75,5 @@ jobs:
           git config user.email "viralab-bot@github.com"
           git config user.name "ViraLab Bot"
           git add topics.json
-          git diff --staged --quiet || git commit -m "Videos published $(date +'%d %b %Y')"
+          git diff --staged --quiet || git commit -m "Videos published $(date +'%d %b %Y %H:%M')"
           git push

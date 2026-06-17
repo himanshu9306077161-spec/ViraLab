@@ -1,0 +1,54 @@
+name: ViraLab Video Pipeline
+
+on:
+  push:
+    paths:
+      - 'topics.json'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 13 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  make_video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python packages
+        run: |
+          pip install requests edge-tts moviepy==1.0.3 Pillow
+          pip install google-auth google-auth-oauthlib google-api-python-client
+          pip install anthropic
+
+      - name: Run Video Pipeline
+        env:
+          PEXELS_API_KEY:         ${{ secrets.PEXELS_API_KEY }}
+          YOUTUBE_CLIENT_ID:      ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET:  ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN:  ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          ANTHROPIC_API_KEY:      ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python3 make_video.py
+
+      - name: Save results
+        run: |
+          git config user.email "viralab@github.com"
+          git config user.name "ViraLab Bot"
+          git add topics.json
+          git diff --staged --quiet || git commit -m "Videos published $(date +'%d %b %Y')"
+          git push

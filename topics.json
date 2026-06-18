@@ -4,7 +4,7 @@
     "audience": "kids",
     "language": "en-IN",
     "episodes": 5,
-    "status": "done",
+    "status": "pending",
     "job_id": "job_1781759342698",
     "requested": "2026-06-18T05:09:03.875Z",
     "results": [
@@ -52,7 +52,7 @@
     "audience": "toddler",
     "language": "en-IN",
     "episodes": 5,
-    "status": "done",
+    "status": "pending",
     "job_id": "job_1781757048018",
     "requested": "2026-06-18T04:30:49.345Z",
     "results": [
@@ -100,7 +100,7 @@
     "audience": "kids",
     "language": "hi-IN",
     "episodes": 10,
-    "status": "done",
+    "status": "pending",
     "job_id": "job_1781754521082",
     "requested": "2026-06-18T03:48:42.334Z",
     "completed": "2026-06-18T05:11:47.637724",
@@ -148,7 +148,7 @@
     "audience": "kids",
     "language": "hi-IN",
     "episodes": 10,
-    "status": "done",
+    "status": "pending",
     "job_id": "job_1781727713445",
     "requested": "2026-06-17T20:21:54.647Z",
     "completed": "2026-06-18T05:11:47.637727",
@@ -196,7 +196,7 @@
     "audience": "kids",
     "language": "hi-IN",
     "episodes": 3,
-    "status": "done",
+    "status": "pending",
     "note": "Do not edit manually. Use the website."
   }
 ]

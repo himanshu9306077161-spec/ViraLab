@@ -1,5 +1,14 @@
 [
   {
+    "topic": "Indian history for children",
+    "audience": "kids",
+    "language": "en-IN",
+    "episodes": 5,
+    "status": "pending",
+    "job_id": "job_1781759342698",
+    "requested": "2026-06-18T05:09:03.875Z"
+  },
+  {
     "topic": "Games for toddlers",
     "audience": "toddler",
     "language": "en-IN",
@@ -10,35 +19,35 @@
     "results": [
       {
         "ep": 1,
-        "title": "Hello Games for toddlers! 🌟 — Introduction",
+        "title": "Hello Games for toddlers! ð â Introduction",
         "video_id": null,
         "url": null,
         "status": "assembled"
       },
       {
         "ep": 2,
-        "title": "Games for toddlers and Beautiful Colours 🎨",
+        "title": "Games for toddlers and Beautiful Colours ð¨",
         "video_id": null,
         "url": null,
         "status": "assembled"
       },
       {
         "ep": 3,
-        "title": "Games for toddlers Makes New Friends 🤝",
+        "title": "Games for toddlers Makes New Friends ð¤",
         "video_id": null,
         "url": null,
         "status": "assembled"
       },
       {
         "ep": 4,
-        "title": "Games for toddlers Eats Healthy Food 🍎",
+        "title": "Games for toddlers Eats Healthy Food ð",
         "video_id": null,
         "url": null,
         "status": "assembled"
       },
       {
         "ep": 5,
-        "title": "Games for toddlers Plays in the Garden 🌳",
+        "title": "Games for toddlers Plays in the Garden ð³",
         "video_id": null,
         "url": null,
         "status": "assembled"
@@ -70,7 +79,7 @@
     "results": []
   },
   {
-    "topic": "Example ÃÂ¢ÃÂÃÂ website will add topics automatically",
+    "topic": "Example ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ website will add topics automatically",
     "audience": "kids",
     "language": "hi-IN",
     "episodes": 3,

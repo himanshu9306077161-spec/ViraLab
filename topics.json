@@ -4,9 +4,48 @@
     "audience": "kids",
     "language": "en-IN",
     "episodes": 5,
-    "status": "pending",
+    "status": "done",
     "job_id": "job_1781759342698",
-    "requested": "2026-06-18T05:09:03.875Z"
+    "requested": "2026-06-18T05:09:03.875Z",
+    "results": [
+      {
+        "ep": 1,
+        "title": "What is Indian history for children? — Fun Introduction",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 2,
+        "title": "The Amazing History of Indian history for children",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 3,
+        "title": "How Indian history for children Works — Step by Step",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 4,
+        "title": "Indian history for children in Our Daily Life",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 5,
+        "title": "5 Amazing Facts About Indian history for children",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      }
+    ],
+    "last_updated": "2026-06-18T05:11:45.636932",
+    "completed": "2026-06-18T05:11:47.637706"
   },
   {
     "topic": "Games for toddlers",
@@ -64,8 +103,45 @@
     "status": "done",
     "job_id": "job_1781754521082",
     "requested": "2026-06-18T03:48:42.334Z",
-    "completed": "2026-06-18T03:50:39.607037",
-    "results": []
+    "completed": "2026-06-18T05:11:47.637724",
+    "results": [
+      {
+        "ep": 1,
+        "title": "What is Indian history for children? — Fun Introduction",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 2,
+        "title": "The Amazing History of Indian history for children",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 3,
+        "title": "How Indian history for children Works — Step by Step",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 4,
+        "title": "Indian history for children in Our Daily Life",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 5,
+        "title": "5 Amazing Facts About Indian history for children",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      }
+    ],
+    "last_updated": "2026-06-18T05:11:45.636941"
   },
   {
     "topic": "Indian history for children",
@@ -75,8 +151,45 @@
     "status": "done",
     "job_id": "job_1781727713445",
     "requested": "2026-06-17T20:21:54.647Z",
-    "completed": "2026-06-18T03:50:39.607044",
-    "results": []
+    "completed": "2026-06-18T05:11:47.637727",
+    "results": [
+      {
+        "ep": 1,
+        "title": "What is Indian history for children? — Fun Introduction",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 2,
+        "title": "The Amazing History of Indian history for children",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 3,
+        "title": "How Indian history for children Works — Step by Step",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 4,
+        "title": "Indian history for children in Our Daily Life",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      },
+      {
+        "ep": 5,
+        "title": "5 Amazing Facts About Indian history for children",
+        "video_id": null,
+        "url": null,
+        "status": "assembled"
+      }
+    ],
+    "last_updated": "2026-06-18T05:11:45.636944"
   },
   {
     "topic": "Example ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ website will add topics automatically",

@@ -1,5 +1,14 @@
 [
   {
+    "topic": "Games for toddlers",
+    "audience": "toddler",
+    "language": "en-IN",
+    "episodes": 5,
+    "status": "pending",
+    "job_id": "job_1781757048018",
+    "requested": "2026-06-18T04:30:49.345Z"
+  },
+  {
     "topic": "Indian history for children",
     "audience": "kids",
     "language": "hi-IN",
@@ -22,7 +31,7 @@
     "results": []
   },
   {
-    "topic": "Example Ã¢ÂÂ website will add topics automatically",
+    "topic": "Example ÃÂ¢ÃÂÃÂ website will add topics automatically",
     "audience": "kids",
     "language": "hi-IN",
     "episodes": 3,

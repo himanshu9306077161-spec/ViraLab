@@ -35,7 +35,8 @@ jobs:
         run: |
           pip install --upgrade pip --quiet
           pip install requests==2.31.0 --quiet
-          pip install edge-tts==6.1.9 --quiet
+          pip install gtts==2.5.1 --quiet
+
           pip install moviepy==1.0.3 --quiet
           pip install imageio==2.33.0 --quiet
           pip install imageio-ffmpeg==0.4.9 --quiet

@@ -4,8 +4,19 @@
     "audience": "kids",
     "language": "en-IN",
     "episodes": 1,
-    "status": "pending",
+    "status": "done",
     "job_id": "job_1781764984193",
-    "requested": "2026-06-18T06:43:05.297Z"
+    "requested": "2026-06-18T06:43:05.297Z",
+    "results": [
+      {
+        "ep": 1,
+        "title": "What is Dinosaurs — everything about T-Rex? — Introduction",
+        "status": "assembled",
+        "url": null,
+        "video_id": null
+      }
+    ],
+    "last_updated": "2026-06-18T06:45:56.644973",
+    "completed": "2026-06-18T06:45:58.645964"
   }
 ]

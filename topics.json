@@ -4,9 +4,11 @@
     "audience": "kids",
     "language": "hi-IN",
     "episodes": 10,
-    "status": "pending",
+    "status": "done",
     "job_id": "job_1781754521082",
-    "requested": "2026-06-18T03:48:42.334Z"
+    "requested": "2026-06-18T03:48:42.334Z",
+    "completed": "2026-06-18T03:50:39.607037",
+    "results": []
   },
   {
     "topic": "Indian history for children",
@@ -16,7 +18,7 @@
     "status": "done",
     "job_id": "job_1781727713445",
     "requested": "2026-06-17T20:21:54.647Z",
-    "completed": "2026-06-17T20:24:19.705903",
+    "completed": "2026-06-18T03:50:39.607044",
     "results": []
   },
   {
